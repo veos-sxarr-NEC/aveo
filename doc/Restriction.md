@@ -21,3 +21,5 @@ Synchronous APIs are below:
  - veo_read_mem()
  - veo_unload_library()
  - veo_write_mem()
+
+The size of arguments passed to functions is limited to 31MB, since the size of the buffer to transfer a message and its payload is 32MB. Allocate and use memory buffers on heap when you have huge argument arrays to pass.

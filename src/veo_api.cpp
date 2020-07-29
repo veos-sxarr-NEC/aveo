@@ -677,10 +677,11 @@ int veo_args_set_float(veo_args *ca, int argnum, float val)
  * The buffer is copied to the stack and will look to the VE callee like a
  * local variable of the caller function. It is currently erased right after
  * the call returns, thus only intent IN args passing is supported. Use this
- * to pass structures to the VE "kernel" function. The size of arguments 
- * passed on the stack is limited to 63MB, since the size of the initial 
- * stack is 64MB. Try staying well below this value, allocate and use memory
- * buffers on heap when you have huge argument arrays to pass.
+ * to pass structures to the VE "kernel" function. The size of
+ * arguments passed on the stack is limited to 31MB, since the size of
+ * the buffer to transfer a message and its payload is 32MB. Try
+ * staying well below this value, allocate and use memory buffers on
+ * heap when you have huge argument arrays to pass.
  */
 int veo_args_set_stack(veo_args *ca, enum veo_args_intent inout,
                        int argnum, char *buff, size_t len)
