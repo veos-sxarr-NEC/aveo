@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Alternative VE Offloading
-   &#160;<span id="projectnumber">2.6.0</span>
+   &#160;<span id="projectnumber">2.7.0</span>
    </div>
   </td>
  </tr>
@@ -66,12 +66,11 @@ $(document).ready(function(){initNavTree('md_GettingStarted.html','');});
 <div class="fragment"><div class="line"><span class="preprocessor"># yum install veoffload-aveo veoffload-aveorun</span></div>
 </div><!-- fragment --><p> You need not uninstall veoffload and veoffload-veorun which are the packages of the previous VEO implementation. So, you can execute your program linked with the previous VEO implementation.</p>
 <h3>Installing development package</h3>
-<p>To develop programs, veoffload-aveo-devel and veoffload-aveorun-devel and the development packages of the compiler (2.2.2 or later) are also required. These packages conflict with veoffload-devel and veoffload-veorun-devel. So, please uninstall veoffload-devel and veoffload-veorun-devel.</p>
-<p>To uninstall the conflicting packages by yum, execute the following command as root:</p>
-<div class="fragment"><div class="line"><span class="preprocessor"># yum remove veoffload-devel veoffload-veorun-devel</span></div>
-</div><!-- fragment --><p>To install the packages to develop programs by yum, execute the following command as root:</p>
+<p>To develop programs, veoffload-aveo-devel and veoffload-aveorun-devel and the development packages of the compiler (2.2.2 or later) are also required.</p>
+<p>To install the packages to develop programs by yum, execute the following command as root:</p>
 <div class="fragment"><div class="line"><span class="preprocessor"># yum install veoffload-aveo-devel veoffload-aveorun-devel</span></div>
-</div><!-- fragment --><p> Then, you can link your program with AVEO. If you want to link your program with the previous VEO implementation, please install its packages into another machine.</p>
+</div><!-- fragment --><p> veoffload-devel and veoffload-veorun-devel will be uninstalled automatically, because they conflict with veoffload-aveo-devel and veoffload-aveorun-devel.</p>
+<p>Then, you can link your program with AVEO. If you want to link your program with the previous VEO implementation, please install its packages into another machine.</p>
 <h2>Hello World</h2>
 <p>First, let's try a "Hello, World!" program on VE.</p>
 <h3>The Required Number of HugePages for VEO</h3>

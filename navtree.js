@@ -3,7 +3,7 @@ var NAVTREE =
   [ "Alternative VE Offloading", "index.html", [
     [ "Introduction", "index.html", null ],
     [ "Getting Started with VEO", "md_GettingStarted.html", null ],
-    [ "Restriction", "md_Restriction.html", null ],
+    [ "Restrictions", "md_Restriction.html", null ],
     [ "Modules", "modules.html", "modules" ]
   ] ]
 ];

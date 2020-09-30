@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.5"/>
-<title>Alternative VE Offloading: Restriction</title>
+<title>Alternative VE Offloading: Restrictions</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Alternative VE Offloading
-   &#160;<span id="projectnumber">2.6.0</span>
+   &#160;<span id="projectnumber">2.7.0</span>
    </div>
   </td>
  </tr>
@@ -51,13 +51,14 @@ $(document).ready(function(){initNavTree('md_Restriction.html','');});
 <div id="doc-content">
 <div class="header">
   <div class="headertitle">
-<div class="title">Restriction </div>  </div>
+<div class="title">Restrictions </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>VEO requires 32 Huge Pages per a context.</p>
-<p>VEO does not support a quadruple precision real number and a variable length character string as an argument of Fortran subroutines and functions.</p>
-<p>VEO does not support a quadruple precision real number and a variable length character string as a return value of Fortran functions.</p>
-<p>When <a class="el" href="group__veoapi.html#ga6193ffeb9a3ac5c34ce666ea652e6daa" title="create a VE process ">veo_proc_create()</a> is invoked, multiple threads for a OpenMP program are created on VE side by default. If you do not use OpenMP, set environment variable OMP_NUM_THREADS=1.</p>
+<div class="textblock"><p>VEO requires 32 Huge Pages per VE context. Make sure the system is configured with huge pages by checking <code>/proc/meminfo</code>.</p>
+<p>VEO does not support quadruple precision real number and variable length character strings as arguments of Fortran subroutines and functions.</p>
+<p>VEO does not support quadruple precision real number and variable length character strings as return values of Fortran functions.</p>
+<p>When <a class="el" href="group__veoapi.html#ga6193ffeb9a3ac5c34ce666ea652e6daa" title="create a VE process ">veo_proc_create()</a> is invoked, multiple threads for a OpenMP program are created on VE side in the default context. If you do not use OpenMP, set the environment variable VE_OMP_NUM_THREADS=1.</p>
+<p>If using more VE contexts inside one proc, restrict the contexts to use only one OpenMP thread. Multiple contexts with multiple OpenMP threads do not work.</p>
 <p>Synchronous APIs wait the completion of previous requests submitted by asynchronous APIs. Synchronous APIs are below:</p>
 <ul>
 <li><a class="el" href="group__veoapi.html#ga410cd584d728e6801bf2c378e43e4e64" title="Allocate a VE memory buffer. ">veo_alloc_mem()</a></li>
@@ -72,7 +73,7 @@ $(document).ready(function(){initNavTree('md_Restriction.html','');});
 <li><a class="el" href="group__veoapi.html#ga154f6f32b5b501e06a4827d37b5e367e" title="unload a VE library ">veo_unload_library()</a></li>
 <li><a class="el" href="group__veoapi.html#gaadef05e94c760849d95670300660426e" title="Write VE memory. ">veo_write_mem()</a></li>
 </ul>
-<p>The size of arguments passed to functions is limited to 31MB, since the size of the buffer to transfer a message and its payload is 32MB. Allocate and use memory buffers on heap when you have huge argument arrays to pass. </p>
+<p>The size of arguments passed to functions is limited to 63MB, since the size of the initial stack is 64MB. Allocate and use memory buffers on heap when you have huge argument arrays to pass. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
