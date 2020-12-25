@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Alternative VE Offloading
-   &#160;<span id="projectnumber">2.7.1</span>
+   &#160;<span id="projectnumber">2.7.3</span>
    </div>
   </td>
  </tr>
@@ -725,10 +725,11 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Return a pointer of VEO thread context in a proc. </p>
+<p>The argument idx takes an integer value zero or more and less than the result of <a class="el" href="group__veoapi.html#gab334b7c9524769632e52976284ea531b" title="Return number of open contexts in a proc. ">veo_num_contexts()</a>. The context with idx=0 is the main context of the ProcHandle. It will not be destroyed when closed, instead it is destroyed when the proc is killed by <a class="el" href="group__veoapi.html#gabf0ca7fb54ada334ed1a8c64fe749418" title="destroy a VE process ">veo_proc_destroy()</a>, or when the program ends. <a class="el" href="group__veoapi.html#ga8c37fa29420cb7cf13bfb980702e9231" title="Return a pointer of VEO thread context in a proc. ">veo_get_context()</a> returns NULL if a user specifies idx with a value which is the result of <a class="el" href="group__veoapi.html#gab334b7c9524769632e52976284ea531b" title="Return number of open contexts in a proc. ">veo_num_contexts()</a> or more.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">proc</td><td>VEO process handle </td></tr>
-    <tr><td class="paramname">idx</td><td>index / position inside the ctx vector </td></tr>
+    <tr><td class="paramname">idx</td><td>a index which takes an integer value zero or more and less than the result of <a class="el" href="group__veoapi.html#gab334b7c9524769632e52976284ea531b" title="Return number of open contexts in a proc. ">veo_num_contexts()</a> </td></tr>
   </table>
   </dd>
 </dl>

@@ -25,7 +25,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Alternative VE Offloading
-   &#160;<span id="projectnumber">2.7.1</span>
+   &#160;<span id="projectnumber">2.7.3</span>
    </div>
   </td>
  </tr>
@@ -73,7 +73,13 @@ $(document).ready(function(){initNavTree('md_Restriction.html','');});
 <li><a class="el" href="group__veoapi.html#ga154f6f32b5b501e06a4827d37b5e367e" title="unload a VE library ">veo_unload_library()</a></li>
 <li><a class="el" href="group__veoapi.html#gaadef05e94c760849d95670300660426e" title="Write VE memory. ">veo_write_mem()</a></li>
 </ul>
-<p>The size of arguments passed to functions is limited to 63MB, since the size of the initial stack is 64MB. Allocate and use memory buffers on heap when you have huge argument arrays to pass. </p>
+<p>The size of arguments passed to functions is limited to 63MB, since the size of the initial stack is 64MB. Allocate and use memory buffers on heap when you have huge argument arrays to pass.</p>
+<p>If a user specifies an incorrect address to <a class="el" href="group__veoapi.html#gaadef05e94c760849d95670300660426e" title="Write VE memory. ">veo_write_mem()</a> or <a class="el" href="group__veoapi.html#gad18c4dd5d0f8923418c1b766b455d6bb" title="Asynchronously write VE memory. ">veo_async_write_mem()</a>, <a class="el" href="group__veoapi.html#gaadef05e94c760849d95670300660426e" title="Write VE memory. ">veo_write_mem()</a> expects to return -1, <a class="el" href="group__veoapi.html#gabdd86efca5bb7079e28a28c015c2c9fb" title="pick up a resutl from VE function ">veo_call_wait_result()</a> expects to return VEO_COMMAND_ERROR, but may return VEO_COMMAND_OK. Please note that the user can be aware of the error because subsequent calls to the VEO API will return an error.</p>
+<p>The transfer speed of <a class="el" href="group__veoapi.html#gaadef05e94c760849d95670300660426e" title="Write VE memory. ">veo_write_mem()</a> or <a class="el" href="group__veoapi.html#gad18c4dd5d0f8923418c1b766b455d6bb" title="Asynchronously write VE memory. ">veo_async_write_mem()</a> become slow depending on the memory location(NUMA node) of the write destination. The data transfer speed may become stably high by running the program via numactl. Please note that the optimal command option will change depending on the operating conditions of the machine and software. Execute the following command and try to validate if the transfer speed become stably high.</p>
+<ol type="1">
+<li><code>numactl --localalloc &lt;filename&gt;</code></li>
+<li><code>numactl --cpunodebind=&lt;NUMA node&gt; --localalloc &lt;filename&gt;</code> </li>
+</ol>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
