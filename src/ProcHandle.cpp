@@ -518,7 +518,7 @@ Context *ProcHandle::openContext(size_t stack_sz)
   }
   // compute core
   int core = -1;
-  int ve_omp_threads = -1;
+  int ve_omp_threads = 1;
   const char *e = getenv("VE_OMP_NUM_THREADS");
   if (e != nullptr) {
     ve_omp_threads = stoi(std::string(e));
