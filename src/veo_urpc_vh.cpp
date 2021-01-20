@@ -22,67 +22,67 @@ namespace veo {
    * @param args arguments of the function
    * @return request ID if successful, -1 if failed.
    */
-  int64_t send_call_nolock(urpc_peer_t *up, uint64_t ve_sp, uint64_t addr,
-                           std::vector<uint64_t> const &regs,
-                           uint64_t stack_top, size_t stack_size,
-                           bool copyin, bool copyout, void *stack_buf)
+  int64_t send_call_nolock(urpc_peer_t *up, uint64_t ve_sp, uint64_t addr, CallArgs &args)
   {
     int64_t req;
 
-    void *regsp = (void *)regs.data();
-    size_t regsz = regs.size() * sizeof(uint64_t);
+    void *stack_buf = (void *)args.stack_buf.get();
+    auto regs = args.getRegVal(ve_sp);
+    size_t regs_sz = regs.size() * sizeof(uint64_t);
 
-    if (!(copyin || copyout)) {
+    if (!(args.copied_in || args.copied_out)) {
       // no stack transfer
       // transfered data: addr, regs array
     
       req = urpc_generic_send(up, URPC_CMD_CALL, (char *)"LP",
-                              addr, regsp, regsz);
+                              addr, (void *)regs.data(), regs_sz);
 
-    } else if (copyin && !copyout) {
+    } else if (args.copied_in && !args.copied_out) {
       // stack copied IN only
       // transfered data: addr, regs array, stack_top, stack_pointer, stack_image
 
-      size_t size = stack_size;
-      if (size > MAX_ARGS_STACK_SIZE - regsz)
-        size = MAX_ARGS_STACK_SIZE - regsz;
+      size_t size = args.stack_size;
+      if (size > MAX_ARGS_STACK_SIZE - regs_sz)
+        size = MAX_ARGS_STACK_SIZE - regs_sz;
       req = urpc_generic_send(up, URPC_CMD_CALL_STKIN, (char *)"LPLLP",
-                              addr, regsp, regsz, stack_top, ve_sp,
+                              addr, (void *)regs.data(), regs_sz,
+                              args.stack_top, ve_sp,
                               stack_buf, size);
 
-      VEO_DEBUG("stack IN, nregs=%d stack_top=%p sp=%p stack_size=%d", regsz/8,
-                (void *)stack_top, (void *)ve_sp, stack_size);
-    } else if (copyin && copyout) {
+      VEO_DEBUG("stack IN, nregs=%d stack_top=%p sp=%p stack_size=%d", regs_sz/8,
+                (void *)args.stack_top, (void *)ve_sp, args.stack_size);
+    } else if (args.copied_in && args.copied_out) {
       // stack transfered into VE and back,
       // transfered data: addr, regs array, stack_top, stack_pointer, stack_image
 
-      size_t size = stack_size;
-      if (size > MAX_ARGS_STACK_SIZE - regsz)
-        size = MAX_ARGS_STACK_SIZE - regsz;
+      size_t size = args.stack_size;
+      if (size > MAX_ARGS_STACK_SIZE - regs_sz)
+        size = MAX_ARGS_STACK_SIZE - regs_sz;
       req = urpc_generic_send(up, URPC_CMD_CALL_STKINOUT, (char *)"LPLLP",
-                              addr, regsp, regsz, stack_top, ve_sp,
+                              addr, (void *)regs.data(), regs_sz,
+                              args.stack_top, ve_sp,
                               stack_buf, size);
       VEO_DEBUG("stack INOUT, nregs=%d stack_top=%p sp=%p stack_size=%d",
-                regsz/8, (void *)stack_top, (void *)ve_sp, stack_size);
-    } else if (!copyin && copyout) {
+                regs_sz/8, (void *)args.stack_top, (void *)ve_sp, args.stack_size);
+    } else if (!args.copied_in && args.copied_out) {
       // stack transfered only back, from VE to VH
       // transfered data: addr, regs array, stack_top, stack_pointer, stack_image
 
-      size_t size = stack_size;
-      if (size > MAX_ARGS_STACK_SIZE - regsz)
-        size = MAX_ARGS_STACK_SIZE - regsz;
+      size_t size = args.stack_size;
+      if (size > MAX_ARGS_STACK_SIZE - regs_sz)
+        size = MAX_ARGS_STACK_SIZE - regs_sz;
       req = urpc_generic_send(up, URPC_CMD_CALL_STKOUT, (char *)"LPLLQ",
-                              addr, regsp, regsz, stack_top, ve_sp,
+                              addr, (void *)regs.data(), regs_sz,
+                              args.stack_top, ve_sp,
                               stack_buf, size);
       VEO_DEBUG("stack OUT, nregs=%d stack_top=%p sp=%p stack_size=%d",
-                regsz/8, (void *)stack_top, (void *)ve_sp, stack_size);
+                regs_sz/8, (void *)args.stack_top, (void *)ve_sp, args.stack_size);
     }
     return req;
   }
 
   
-  int unpack_call_result(urpc_mb_t *m, std::function<void(void *)> copyout,
-                         void *payload, size_t plen, uint64_t *result)
+  int unpack_call_result(urpc_mb_t *m, CallArgs *args, void *payload, size_t plen, uint64_t *result)
   {
     int rc = -1;
 
@@ -93,12 +93,12 @@ namespace veo {
         VEO_ERROR("message had no payload!?");
       }
     } else if (m->c.cmd == URPC_CMD_RES_STK) {
-      void *stack_buf = nullptr;
-      size_t stack_size;
+      void *stack_buf;
       rc = urpc_unpack_payload(payload, plen, (char *)"LP", (int64_t *)result,
-                               &stack_buf, &stack_size);
+                               &stack_buf, &args->stack_size);
       if (rc == 0) {
-        copyout(stack_buf);
+        memcpy(args->stack_buf.get(), stack_buf, args->stack_size);
+        args->copyout();
       }
     } else if (m->c.cmd == URPC_CMD_EXCEPTION) {
       uint64_t exc = 0;

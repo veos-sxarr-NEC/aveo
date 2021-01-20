@@ -25,35 +25,13 @@ namespace internal {
  */
 struct ArgBase {
   virtual ~ArgBase() = default;
-  virtual int64_t getRegVal() const = 0;
+  virtual int64_t getRegVal(uint64_t, int, size_t &) const = 0;
   virtual size_t sizeOnStack() const = 0;
   virtual void setStackImage(uint64_t, std::string &, int, bool &, bool &) = 0;
-  virtual std::function<void(void *)> copyoutFromStackImage(uint64_t) = 0;
+  virtual void copyoutFromStackImage(uint64_t, const char *) = 0;
 };
 } // namespace internal
 
-#if 0
-/**
- * @brief Arguments structure used in submitting a command
- */
-struct SendArgs {
-  std::vector<uint64_t> regs;
-  uint64_t stack_top;
-  size_t stack_size;
-  bool copyin;
-  bool copyout;
-  std::unique_ptr<char[]> stack_buf;
-
-  SendArgs(uint64_t stack_top_, size_t stack_size_, bool copyin_,
-           bool copyout_)
-    : stack_top(stack_top_), stack_size(stack_size_), copyin(copyin_),
-      copyout(copyout_) {}
-};
-#endif
-
-/**
- * @brief Class used for constructing the arguments of a call
- */
 class CallArgs {
   std::vector<std::unique_ptr<internal::ArgBase> > arguments;
   template<typename T> void push_(T val);
@@ -78,7 +56,7 @@ public:
   CallArgs(const CallArgs &) = delete;
 
   /**
-   * @brief clear all arguments
+   * @brief clear all aruguments
    */
   void clear() {
     this->arguments.clear();
@@ -105,28 +83,15 @@ public:
     return this->arguments.size();
   }
 
-  std::vector<uint64_t> getRegVal();
+  std::vector<uint64_t> getRegVal(uint64_t) const;
 
   void setup(uint64_t);
-
-  /*
-  SendArgs *send_args() {
-    SendArgs sa(this->stack_top, this->stack_size,
-                this->copied_in, this->copied_out);
-    sa.regs = this->getRegVal();
-    sa.stack_buf = std::move(this->stack_buf);
-    return &sa;
-  }
-  */
-  /**
-   * @brief create lambda functions for copying stack passed data out
-   */
-  std::function<void(void *)> copyout();
+  void copyin(std::function<int(uint64_t, const void *, size_t)>);
+  void copyout();
 
   veo_args *toCHandle() {
     return reinterpret_cast<veo_args *>(this);
   }
 };
-
 }
 #endif
