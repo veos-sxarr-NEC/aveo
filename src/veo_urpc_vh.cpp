@@ -93,7 +93,7 @@ namespace veo {
         VEO_ERROR("message had no payload!?");
       }
     } else if (m->c.cmd == URPC_CMD_RES_STK) {
-      void *stack_buf;
+      void *stack_buf = nullptr;
       rc = urpc_unpack_payload(payload, plen, (char *)"LP", (int64_t *)result,
                                &stack_buf, &args->stack_size);
       if (rc == 0) {
