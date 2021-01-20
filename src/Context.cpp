@@ -268,25 +268,13 @@ uint64_t Context::simpleCallAsync(uint64_t addr, CallArgs &args)
     return VEO_REQUEST_ID_INVALID;
   
   auto id = this->issueRequestID();
-
-  auto regs = args.getRegVal();
-  auto stack_top = args.stack_top;
-  auto stack_size = args.stack_size;
-  bool copyin = args.copied_in;
-  bool copyout = args.copied_out;
-  std::unique_ptr<char[]> stack = std::move(args.stack_buf);
-  auto copyout_func = args.copyout();
-
   //
   // submit function, called when cmd is issued to URPC
   //
-  auto f = [regs, stack_top, stack_size, copyin, copyout,
-            stackp = (void *)stack.get(), this, addr, id] (Command *cmd)
+  auto f = [&args, this, addr, id] (Command *cmd)
            {
              VEO_TRACE("[request #%d] start...", id);
-             int64_t req = send_call_nolock(this->up, this->ve_sp, addr, regs,
-                                            stack_top, stack_size,
-                                            copyin, copyout, stackp);
+             int req = send_call_nolock(this->up, this->ve_sp, addr, args);
              VEO_TRACE("[request #%d] VE-URPC req ID = %ld", id, req);
              if (req >= 0) {
                cmd->setURPCReq(req, VEO_COMMAND_UNFINISHED);
@@ -301,11 +289,11 @@ uint64_t Context::simpleCallAsync(uint64_t addr, CallArgs &args)
   //
   // result function, called when response has arrived from URPC
   //
-  auto u = [copyout_func, this, id] (Command *cmd, urpc_mb_t *m, void *payload, size_t plen)
+  auto u = [&args, this, id] (Command *cmd, urpc_mb_t *m, void *payload, size_t plen)
            {
              VEO_TRACE("[request #%d] reply sendbuff received (cmd=%d)...", id, m->c.cmd);
              uint64_t result;
-             int rv = unpack_call_result(m, copyout_func, payload, plen, &result);
+             int rv = unpack_call_result(m, &args, payload, plen, &result);
              VEO_TRACE("[request #%d] unpacked", id);
              if (rv < 0) {
                cmd->setResult(result, VEO_COMMAND_EXCEPTION);
