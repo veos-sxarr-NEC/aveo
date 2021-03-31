@@ -14,6 +14,49 @@
  *
  * @author NEC Corporation
  * @copyright 2017-2021. Licensed under the terms of LGPL v2.1.
+ *
+ * @par Revision History
+ *	Revision,
+ *	Date,
+ *	Updates/Remarks
+ * @par 
+ *      Rev.6,
+ *      Mar. 2021,
+ * @n	This revision covers veoffload-aveo-2.7.6 or later.
+ * @n	Added desctiptions of heterogeneous memory(HMEM) API.
+ * @n	Generated an extra page containing the source of examples.
+ * @n   Added desctiorions of MPI+VEO examples.
+ * @par 
+ *      Rev.5,
+ *      Jan. 2021,
+ * @n	This revision covers veoffload-aveo-2.7.5 or later.
+ * @n	Added desctiptions of environment variables to optimize the performance of data transfer.
+ * @n	Deleted restrictions that these APIs could return a success value if veo_write_mem() or veo_async_write_mem() fails.
+ * @par 
+ *      Rev.4,
+ *      Dec. 2021,
+ * @n	This revision covers veoffload-aveo-2.7.3 or later.
+ * @n	Added a workaround for slow veo_write_mem() or veo_async_write_mem() transfer speeds depending on memory.
+ * @n	Fixed API reference of veo_get_context().
+ * @n	Added restrictions that these APIs could return a success value if veo_write_mem() or veo_async_write_mem() fails.
+ * @par 
+ *      Rev.3,
+ *      Oct. 2020,
+ * @n	This revision covers veoffload-aveo-2.7.1 or later.
+ * @n	Updated the version.
+ * @par 
+ *      Rev.2,
+ *      Sep. 2020,
+ * @n	This revision covers veoffload-aveo-2.7.0 or later.
+ * @n	Updated installation instructions.
+ * @n	Updated the size limit for arguments passed to functions.
+ * @n	Added restrictions on using multiple contexts with multiple OpenMP threads.
+ * @n	Fixed minor errors.
+ * @par 
+ *      Rev.1,
+ *      Jul. 2020,
+ * @n	This revision covers veoffload-aveo-2.6.2 or later.
+ * @n	First release.
  */
 #include "ve_offload.h"
 
