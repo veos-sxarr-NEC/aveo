@@ -20,11 +20,17 @@
  *	Date,
  *	Updates/Remarks
  * @par 
+ *      Rev.7,
+ *      May 2021,
+ * @n	This revision covers veoffload-aveo-2.8 or later.
+ * @n	Fixed mpirun/mpiexec options for the MPI program which calls VEO API.
+ * @n	Fixed the library name to load in the example code([mpi-veo.c](examples_2VH_2mpi-veo_8c-example.html)).
+ * @par 
  *      Rev.6,
  *      Mar. 2021,
  * @n	This revision covers veoffload-aveo-2.7.6 or later.
  * @n	Added desctiptions of heterogeneous memory(HMEM) API.
- * @n	Generated an extra page containing the source of examples.
+ * @n	Added example source codes.
  * @n   Added desctiorions of MPI+VEO examples.
  * @par 
  *      Rev.5,
