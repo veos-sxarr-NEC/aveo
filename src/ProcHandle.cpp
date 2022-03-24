@@ -201,7 +201,7 @@ int ProcHandle::exitProc()
   int rc;
   std::lock_guard<std::mutex> procslock(__procs_mtx);
   std::lock_guard<std::mutex> ctxlock(ctx_mutex);
-  std::lock_guard<std::mutex> submitlock(this->mctx->submit_mtx);
+  std::lock_guard<std::recursive_mutex> submitlock(this->mctx->submit_mtx);
   VEO_TRACE("proc %p", (void *)this);
   this->mctx->_synchronize_nolock();
   //
@@ -502,7 +502,7 @@ void ProcHandle::delContextNolock(Context *ctx)
 Context *ProcHandle::openContext(size_t stack_sz)
 {
   std::lock_guard<std::mutex> ctxlock(ctx_mutex);
-  std::lock_guard<std::mutex> submitlock(this->mctx->submit_mtx);
+  std::lock_guard<std::recursive_mutex> submitlock(this->mctx->submit_mtx);
   this->mctx->_synchronize_nolock();
 
   if (this->ctx.empty()) {
