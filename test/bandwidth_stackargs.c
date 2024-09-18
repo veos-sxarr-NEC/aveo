@@ -110,12 +110,12 @@ int main(int argc, char **argv)
 	uint64_t req, retval;
 	if (do_send) {
 		veo_args_set_stack(arg, VEO_INTENT_IN, 0, (char *)local_buff, bsize);
-		ts = get_time_us();
+		ts = get_time_us_real();
 		for (i = 0; i < n; i++) {
 			req = veo_call_async(ctx, sym, arg);
 			res = veo_call_wait_result(ctx, req, &retval);
 		}
-		te = get_time_us();
+		te = get_time_us_real();
 		bw = (double)bsize * n/((double)(te - ts)/1e6);
 		bw = bw / 1e6;
 		printf("veo_write_mem returned: %lu bw=%f MB/s\n", res, bw);
@@ -126,12 +126,12 @@ int main(int argc, char **argv)
 
 	if (do_recv) {
 		veo_args_set_stack(arg, VEO_INTENT_OUT, 0, (char *)local_buff, bsize);
-		ts = get_time_us();
+		ts = get_time_us_real();
 		for (i = 0; i < n; i++) {
 			req = veo_call_async(ctx, sym, arg);
 			res = veo_call_wait_result(ctx, req, &retval);
 		}
-		te = get_time_us();
+		te = get_time_us_real();
 		bw = (double)bsize * n/((double)(te - ts)/1e6);
 		bw = bw / 1e6;
 		printf("veo_read_mem returned: %lu bw=%f MB/s\n", res, bw);

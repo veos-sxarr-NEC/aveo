@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
 	//----------------------
 	printf("Test 1: submit %d calls, then wait for %d results\n", nloop, nloop);
-        ts = get_time_us();
+        ts = get_time_us_real();
         err = 0;
         for (int i=0; i<nloop; i++) {
           reqs[i] = veo_call_async(ctx, sym, argp);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
           err += veo_call_wait_result(ctx, reqs[i], &res[i]);
         }
         
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d async calls + waits took %fs, %fus/call\n\n",
                nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop);
 	if (err != 0)
@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
 
 	//----------------------
 	printf("Test 2: submit one call and wait for its result, %d times\n", nloop);
-        ts = get_time_us();
+        ts = get_time_us_real();
         err = 0;
         for (int i=0; i<nloop; i++) {
           reqs[i] = veo_call_async(ctx, sym, argp);
           err += veo_call_wait_result(ctx, reqs[i], &res[i]);
         }
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d x (1 async call + 1 wait) took %fs, %fus/call\n\n",
                nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop);
 	if (err != 0)
@@ -77,13 +77,13 @@ int main(int argc, char *argv[])
 
 	//----------------------
 	printf("Test 3: submit %d calls and wait only for last result\n", nloop);
-        ts = get_time_us();
+        ts = get_time_us_real();
         err = 0;
         for (int i=0; i<nloop; i++) {
           reqs[i] = veo_call_async(ctx, sym, argp);
         }
 	err += veo_call_wait_result(ctx, reqs[nloop - 1], &res[nloop - 1]);
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d async calls + 1 wait took %fs, %fus/call\n\n",
                nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop);
 	if (err != 0)
@@ -91,12 +91,12 @@ int main(int argc, char *argv[])
 
 	//----------------------
 	printf("Test 4: submit %d synchronous calls\n", nloop);
-        ts = get_time_us();
+        ts = get_time_us_real();
         err = 0;
         for (int i=0; i<nloop; i++) {
 		err += veo_call_sync(proc, sym, argp, &res[i]);
         }
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d sync calls took %fs, %fus/call\n\n",
                nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop);
 	if (err != 0)

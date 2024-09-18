@@ -120,7 +120,6 @@ int main()
 {
   int err = 0;
   int core = -1;
-  long ts = get_time_us();
   int idx;
   struct sigaction act;
 

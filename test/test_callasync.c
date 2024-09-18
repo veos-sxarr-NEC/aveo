@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
         long ts, te;
         uint64_t reqs[nloop], res[nloop];
 
-        ts = get_time_us();
+        ts = get_time_us_real();
         for (int i=0; i<nloop; i++) {
           reqs[i] = veo_call_async(ctx, sym, argp);
           //printf("submitted req %d\n", i);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
           //printf("received result req %d\n", i);
         }
         
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d async calls took %fs, %f us/call\n",
                nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop);
         printf("cumulated err=%d\n", err);

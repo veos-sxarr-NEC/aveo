@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include <sys/time.h>
+#include <time.h>
 
 #ifdef __ve__
 
@@ -43,6 +44,14 @@ static inline long get_time_us(void)
 #else /* VH, i.e. x86_64 */
 
 static inline long get_time_us(void)
+{
+	struct timespec tp;
+
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID , &tp);
+	return (long)(tp.tv_sec * 1000000 + tp.tv_nsec / 1000);
+}
+
+static inline long get_time_us_real(void)
 {
 	struct timeval t;
 

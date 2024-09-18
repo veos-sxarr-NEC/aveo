@@ -50,11 +50,11 @@ int main(int argc, char *argv[])
 
         long ts, te;
         int nloop = 100000;
-        ts = get_time_us();
+        ts = get_time_us_real();
         for (int i=0; i<nloop; i++) {
           rc = veo_call_sync(proc, sym, argp, &result);
         }
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d sync calls took %fs, %f us/call\n",
                nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop);
 

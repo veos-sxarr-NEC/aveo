@@ -109,10 +109,10 @@ int main(int argc, char **argv)
 	}
 
 	if (do_send) {
-		ts = get_time_us();
+		ts = get_time_us_real();
 		for (i = 0; i < n; i++)
                   res = veo_write_mem(proc, (uint64_t)ve_buff, local_buff, bsize);
-		te = get_time_us();
+		te = get_time_us_real();
 		bw = (double)bsize * n/((double)(te - ts)/1e6);
 		bw = bw / 1e6;
 		printf("veo_write_mem returned: %lu bw=%f MB/s\n", res, bw);
@@ -122,10 +122,10 @@ int main(int argc, char **argv)
 	memset(local_buff, 65, bsize);
 
 	if (do_recv) {
-		ts = get_time_us();
+		ts = get_time_us_real();
 		for (i = 0; i < n; i++)
 		  res = veo_read_mem(proc, local_buff, (uint64_t)ve_buff, bsize);
-		te = get_time_us();
+		te = get_time_us_real();
 		bw = (double)bsize * n/((double)(te - ts)/1e6);
 		bw = bw / 1e6;
 		printf("veo_read_mem returned: %lu bw=%f MB/s\n", res, bw);

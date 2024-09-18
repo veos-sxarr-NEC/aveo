@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   int64_t res[nloop], res2[nloop];
   uint64_t reqs[nloop], reqs2[nloop];
 
-  ts = get_time_us();
+  ts = get_time_us_real();
   for (int i=0; i<nloop; i++) {
     reqs[i] = veo_call_async_by_name(ctx, libh, "empty", argp);
   }
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
           sum += res2[i];
         }
         
-        te = get_time_us();
+        te = get_time_us_real();
         printf("%d async calls took %fs, %f us/call\n",
                2*nloop, (double)(te-ts)/1.e6, (double)(te-ts)/nloop/2);
         printf("cumulated err=%d\n", err);

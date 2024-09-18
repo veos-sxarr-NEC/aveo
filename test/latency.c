@@ -82,20 +82,20 @@ int main(int argc, char **argv)
 	n > 0 ? n : 1;
 
 	printf("calling veo_write_mem\n");
-	ts = get_time_us();
+	ts = get_time_us_real();
 	for (i = 0; i < n; i++)
                  res = veo_write_mem(proc, ve_buff, local_buff, bsize);
-	te = get_time_us();
+	te = get_time_us_real();
 	printf("veo_write_mem n=%d time=%.2fs   latency=%f8.1us\n", n, ((double)(te - ts))/1e6, ((double)(te - ts))/n);
 
 	//overwrite local buffer
 	memset(local_buff, 65, bsize);
 
 	printf("calling veo_udma_recv\n");
-	ts = get_time_us();
+	ts = get_time_us_real();
 	for (i = 0; i < n; i++)
 		res = veo_read_mem(proc, local_buff, ve_buff, bsize);
-	te = get_time_us();
+	te = get_time_us_real();
 	printf("veo_read_mem n=%d time=%.2fs   latency=%f8.1us\n", n, ((double)(te - ts))/1e6, ((double)(te - ts))/n);
 	
 finish:
