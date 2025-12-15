@@ -54,6 +54,7 @@ void *ve_handler_loop(void *arg)
     ve_urpc_recv_progress(up, 3);
   }
   ve_urpc_fini(up);
+  free(a);
   return NULL;
 }
 
@@ -97,7 +98,13 @@ static int newpeer_handler(urpc_peer_t *up, urpc_mb_t *m, int64_t req,
   urpc_unpack_payload(payload, plen, (char *)"IIL", &segid, &core, &stack_sz);
   new_up = ve_urpc_init(segid);
 
-  ve_handler_loop_arg_t arg = { .up = new_up, .core = core };
+  ve_handler_loop_arg_t *arg = malloc(sizeof(ve_handler_loop_arg_t));
+  if (!arg) {
+    VEO_ERROR("Failed to allocate memory for handler loop argument");
+    return -1;
+  }
+  arg->up = new_up;
+  arg->core = core;
 
   ve_urpc_unpin();
 
@@ -106,10 +113,11 @@ static int newpeer_handler(urpc_peer_t *up, urpc_mb_t *m, int64_t req,
   pthread_attr_setstacksize(&_a, stack_sz);
 
   // start new pthread
-  int rc = pthread_create(&__handler_loop_pthreads[__num_ve_peers], &_a, ve_handler_loop, (void *)&arg);
+  int rc = pthread_create(&__handler_loop_pthreads[__num_ve_peers], &_a, ve_handler_loop, (void *)arg);
   if (rc) {
     int new_req = urpc_generic_send(up, URPC_CMD_RESULT, (char *)"L", (int64_t)rc);
     VEO_ERROR("pthread_create failed with rc=%d", rc);
+    free(arg);
     return -1;
   }
 
