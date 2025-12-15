@@ -66,7 +66,7 @@ void free_hook(void *dummy, ...) //struct veo_proc_handle *proc, uint64_t addr)
                 printf("The free_hook argument(addr) is unexpected, should be: %p\n", vebuf);
                 exit(1);
         }
-	if ( veo_is_ve_addr(addr) ) {
+	if ( veo_is_ve_addr((void *)addr) ) {
 		printf("addr is HMEM\n");
 		exit(1);
 	}

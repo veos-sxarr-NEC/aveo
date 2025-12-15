@@ -10,7 +10,7 @@ Source0: @PACKAGE@-@VERSION@.tar.gz
 Requires: veos
 
 BuildRequires: vedebuginfo
-%if 0%{?rhel} == 8
+%if 0%{?rhel} >= 8
 Requires: platform-python
 BuildRequires: platform-python-devel
 %endif
@@ -25,7 +25,8 @@ OpenACC.
 %package devel
 Summary: Development package for VE Offloading Framework based on VE-UDMA RPC
 Requires: %{name} = %{version}-%{release}
-Obsoletes: veoffload-devel veoffload-veorun-devel
+Obsoletes: veoffload-devel <= 2.14.0
+Obsoletes: veoffload-veorun-devel <= 2.14.0
 %description devel
 This package includes header files of VE offloading Framework
 
@@ -40,13 +41,25 @@ This package includes header files of VE offloading Framework
 %define _velibdir %{_subprefix}/lib
 %define _unpackaged_files_terminate_build 0
 
+%if 0%{?rhel} >= 10
+%global __brp_check_rpaths %{nil}
+%global __perl /usr/bin/perl
+%endif
+
 %prep
 %setup -q -n @PACKAGE@-@VERSION@
-%if 0%{?rhel} == 8
+%if 0%{?rhel} >= 10
+   /usr/bin/python3 /usr/lib/rpm/redhat/pathfix.py -pn -i /usr/bin/python3 $RPM_BUILD_DIR/@PACKAGE@-@VERSION@/scripts/gen_veorun_static_symtable
+%else
+%if 0%{?rhel} >= 8
        pathfix.py -pn -i /usr/bin/python3 $RPM_BUILD_DIR/@PACKAGE@-@VERSION@/scripts/gen_veorun_static_symtable
+%endif
 %endif
 
 %build
+%if 0%{?rhel} >= 10
+export PERL=%{__perl}
+%endif
 make all-vh DEST=%{_prefix} VEDEST=%{_subprefix} VEDEST_COM=%{_subprefix_com} PREF=%{buildroot}
 
 %install

@@ -29,7 +29,8 @@ Summary: Development package for VE Offloading Framework based on VE-UDMA RPC
 Requires: glibc-%{_ve_arch}-devel
 Requires: %{name} = %{version}-%{release}
 BuildRequires: glibc-%{_ve_arch}-devel
-Obsoletes: veoffload-devel veoffload-veorun-devel
+Obsoletes: veoffload-devel <= 2.14.0
+Obsoletes: veoffload-veorun-devel <= 2.14.0
 %if "%{_ve_arch}" != "ve3"
 Obsoletes: @PACKAGE@run-devel
 Provides: @PACKAGE@run-devel
@@ -58,16 +59,24 @@ This package includes header files of VE offloading Framework
 %define __strip /opt/nec/ve/bin/nstrip
 %define _unpackaged_files_terminate_build 0
 
-%if 0%{?rhel} == 8
+%if 0%{?rhel} >= 8
 %global __debug_install_post /opt/nec/ve/libexec/find-debuginfo.sh --unique-debug-suffix "-%{VERSION}-%{RELEASE}.%{_arch}" -S debugsourcefiles.list %{_builddir}/%{buildsubdir} %{nil}
 %else
 %global __debug_install_post /opt/nec/ve/libexec/find-debuginfo.sh %{nil}
+%endif
+
+%if 0%{?rhel} >= 10
+%global __brp_check_rpaths %{nil}
+%global __perl /usr/bin/perl
 %endif
 
 %prep
 %setup -q -n @PACKAGE@-@VERSION@
 
 %build
+%if 0%{?rhel} >= 10
+export PERL=%{__perl}
+%endif
 make all-ve DEST=%{_prefix} VEDEST=%{_subprefix} VEDEST_COM=%{_subprefix_com} PREF=%{buildroot}
 
 %install

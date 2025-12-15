@@ -21,6 +21,17 @@ VEORUN_BIN_VE1 = $(abspath $(DEST)/libexec/aveorun_ve1)
 VEORUN_BIN_VE3 = $(abspath $(DEST)/libexec/aveorun_ve3)
 VERSION = $(shell cat ../VERSION)
 
+OS_MAJ_VER := $(shell cat /etc/os-release | grep VERSION_ID | cut -d'"' -f2 | cut -d. -f1)
+ifeq ($(OS_MAJ_VER), 10)
+	ifeq ($(VE_ARCH), ve3)
+		NCPP_OPT = -stdlib=libc++
+	else
+		NCPP_OPT = -stdlib=compat
+	endif
+else
+	NCPP_OPT =
+endif
+
 DEFINES_VE1 := -DVEORUN_BIN_VE1=\"$(VEORUN_BIN_VE1)\"
 DEFINES_VE3 := -DVEORUN_BIN_VE3=\"$(VEORUN_BIN_VE3)\"
 DEFINES_LIBS := -DLIBVEIO=\"$(LIBVEIO)\" -DLIBVEOHMEM=\"$(LIBVEOHMEM)\"
@@ -110,7 +121,7 @@ $(BVEINC)/%.h: %.h | $$(@D)/
 	/usr/bin/install -t $(BVEINC) $<
 
 $(BVELIB)/libaveoVE.so.1.0.0: $(AVEORUN_OBJS) | $$(@D)/
-	$(NCPP) -Wl,-zdefs $(NCPPFLAGS) -fopenmp -fpic -shared \
+	$(NCPP) -Wl,-zdefs $(NCPP_OPT) $(NCPPFLAGS) -fopenmp -fpic -shared \
 	-Wl,-soname=libaveoVE.so.1 -o $@ $^ $(BVELIB)/liburpcVE_omp.a \
 	$(NLDFLAGS) -lveio -lveftrace -ldl
 
@@ -121,7 +132,7 @@ $(BVELIB)/libaveoVE.so: $(BVELIB)/libaveoVE.so.1
 	ln -sf $< $@
 
 $(BVELIB)/libveohmem.so.1.0.0: $(HMEM_OBJS) | $$(@D)/
-	$(NCPP) -Wl,-zdefs $(NCPPFLAGS) -fpic -shared \
+	$(NCPP) -Wl,-zdefs $(NCPP_OPT) $(NCPPFLAGS) -fpic -shared \
 	-Wl,-soname=libveohmem.so.1 -o $@ $^ \
 	$(NLDFLAGS) -Wl,-z,max-page-size=0x200000
 
@@ -197,7 +208,7 @@ $(BVH)/%.o: %.cpp | $$(@D)/
 	$(GPP) $(GPPFLAGS) -fpic -o $@ -c $<
 
 $(BVE)/%.o: %.cpp | $$(@D)/
-	$(NCPP) $(NCPPFLAGS) -fpic -o $@ -c $<
+	$(NCPP) $(NCPPFLAGS) $(NCPP_OPT) -fpic -o $@ -c $<
 
 $(BVE)/aveorun.o: aveorun.c | $$(@D)/
 	$(NCC) $(NCCFLAGS) -fpic -o $@ -c $<
