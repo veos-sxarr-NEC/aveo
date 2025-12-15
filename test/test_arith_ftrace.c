@@ -10,12 +10,12 @@ int nloop = 10000;
 
 int main(int argc, char *argv[])
 {
-	int err = 0;
-        struct veo_proc_handle *proc;
+  int err = 0;
+  struct veo_proc_handle *proc;
 
-	if (argc > 1) {
-		nloop = atoi(argv[1]);
-	}
+  if (argc > 1) {
+    nloop = atoi(argv[1]);
+  }
 
   proc = veo_proc_create(-1);
   //printf("proc = %p\n", (void *)proc);
@@ -25,6 +25,12 @@ int main(int argc, char *argv[])
   //printf("libh = %p\n", (void *)libh);
   if (libh == 0)
 		return -1;
+
+  void *veaddr;
+  size_t size = 8;
+  uint64_t addr = veo_alloc_hmem(proc, &veaddr, size);
+  pid_t pid = veo_get_pid_from_hmem(veaddr);
+  printf("pid = %d\n", pid);
 
   struct veo_thr_ctxt *ctx = veo_context_open(proc);
         

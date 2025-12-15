@@ -32,10 +32,12 @@ for t in test_*; do
     #
     if [ "${t%_ftrace}" != "$t" ]; then
 	[ -f ftrace.out ] && rm -f ftrace.out
+        TMPFILE=$(mktemp ./aveo_testXXXXXXX)
+        trap "rm -f ${TMPFILE}" EXIT
         if [ -x VEORUN_BIN=$LIBEXECDIR/aveorun-ftrace ]; then
-            env VEORUN_BIN=$LIBEXECDIR/aveorun-ftrace ./$t
+            env VEORUN_BIN=$LIBEXECDIR/aveorun-ftrace ./$t > ${TMPFILE}
         else
-            ./$t
+            ./$t > ${TMPFILE}
         fi
         if [ $? -ne 0 ]; then
             bad=$((bad+1))
@@ -45,8 +47,12 @@ for t in test_*; do
         fi
 	sleep 1
         (
-	    [ -f "ftrace.out" ] || ( echo "no ftrace.out"; exit 1; )
-	    /opt/nec/ve/bin/ftrace -f ftrace.out || exit 1
+	    [ -n $VE_NODE_NUMBER ] && VE_NODE_NUMBER=0
+	    FTRACE_PID=$( cat ${TMPFILE} | awk '{ print $3 }' )
+	    echo $FTRACE_PID
+	    FTRACE_FILENAME="ftrace.out.veo.$VE_NODE_NUMBER.$FTRACE_PID"
+	    [ -f $FTRACE_FILENAME ] || ( echo "no ftrace.out"; exit 1; )
+	    /opt/nec/ve/bin/ftrace -f $FTRACE_FILENAME || exit 1
         )
         if [ $? -ne 0 ]; then
             bad=$((bad+1))
