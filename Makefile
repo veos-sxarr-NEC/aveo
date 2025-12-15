@@ -26,7 +26,7 @@ ALL: $(PREPARE) aveo tests doc
 
 all-ve: $(PREPAREVE) aveo-ve
 
-all-vh: $(PREPAREVH) aveo-vh
+all-vh: $(PREPAREVH) aveo-vh ve-urpc-helper
 
 aveo:
 	make -C src $(MAKEVARS)
@@ -53,7 +53,7 @@ install: ALL $(PREPAREINSTALL)
 install-ve: all-ve $(PREPAREINSTALLVE)
 	make -C src install-ve $(MAKEVARS)
 
-install-vh: all-vh $(PREPAREINSTALLVH)
+install-vh: all-vh $(PREPAREINSTALLVH) ve-urpc-install-helper
 	make -C src install-vh $(MAKEVARS)
 
 # -- rules for RPM build
@@ -122,6 +122,12 @@ ve-urpc-vh: $(CWD)/prereqs/ $(CWD)/prereqs/ve-urpc/.git
 
 ve-urpc-install-vh: ve-urpc-vh
 	make -C prereqs/ve-urpc install-vh BUILD=$(BUILD) DEST=$(URPC_INST_DIR) PREF=$(PREF)
+
+ve-urpc-helper: $(CWD)/prereqs/ $(CWD)/prereqs/ve-urpc/.git
+	make -C prereqs/ve-urpc all-helper BUILD=$(BUILD) DEST=$(DEST) PREF=$(PREF)
+
+ve-urpc-install-helper: ve-urpc-helper
+	make -C prereqs/ve-urpc install-helper BUILD=$(BUILD) DEST=$(DEST) PREF=$(PREF)
 
 # --------------------------
 

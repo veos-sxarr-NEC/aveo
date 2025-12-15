@@ -14,6 +14,9 @@ BuildRequires: vedebuginfo
 Requires: platform-python
 BuildRequires: platform-python-devel
 %endif
+%if 0%{?rhel} >= 10
+Requires: libcap
+%endif
 %description
 The Alternative VE Offloading framework (AVEO) is a faster and much
 lower latency replacement to VEO which brings multi-VE support,
@@ -67,12 +70,16 @@ make install-vh DEST=%{_prefix} VEDEST=%{_subprefix} VEDEST_COM=%{_subprefix_com
 
 %post
 /sbin/ldconfig
+%if 0%{?rhel} >= 10
+/usr/sbin/setcap cap_ipc_lock+ep %{_libexecdir}/veo_shmget_helper
+%endif
 
 %files
 %{_libdir}/libveo.so.1
 %{_libdir}/libveo.so.1.0.0
 %{_vebindir}/mk_veorun_static
 %{_vebindir}/relink_aveorun
+%{_libexecdir}/veo_shmget_helper
 
 %files devel
 %{_includedir}/ve_offload.h
